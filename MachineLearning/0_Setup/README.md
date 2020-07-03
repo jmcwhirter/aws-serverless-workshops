@@ -59,6 +59,21 @@ Let's get our code and start working. Inside the terminal:
 
 At this point we have built our cloud based development environment, verified it is configured with the right credentials, and copied down some source code from a code repository.
 
+### Step 5: Install AWS Cloud Development Kit (AWS CDK)
+
+1. Run the following command to install AWS CDK:
+    ```
+    npm install -g aws-cdk
+    ```
+1. Run the following command to install TypeScript:
+    ```
+    npm install -g typescript
+    ```
+1. Run the following command to install CDK dependencies:
+    ```
+    npm install @aws-cdk/core @aws-cdk/aws-s3 @aws-cdk/assert @aws-cdk/aws-lambda @aws-cdk/aws-lambda-event-sources @aws-cdk/aws-sqs @aws-cdk/aws-cloudwatch
+    ```
+
 ## Next step:
 
 We're ready to proceed with building the [data processing pipeline](../1_DataProcessing).
