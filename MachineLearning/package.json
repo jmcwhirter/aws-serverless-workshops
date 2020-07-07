@@ -22,8 +22,10 @@
   },
   "dependencies": {
     "@aws-cdk/aws-cloudwatch": "^1.49.1",
+    "@aws-cdk/aws-iam": "^1.49.1",
     "@aws-cdk/aws-lambda-event-sources": "^1.49.1",
     "@aws-cdk/aws-s3": "^1.49.1",
+    "@aws-cdk/aws-sagemaker": "^1.49.1",
     "@aws-cdk/aws-sqs": "^1.49.1",
     "@aws-cdk/core": "^1.49.1",
     "source-map-support": "^0.5.16"
