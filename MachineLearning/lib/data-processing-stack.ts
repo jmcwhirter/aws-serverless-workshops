@@ -83,6 +83,10 @@ export class DataProcessingStack extends cdk.Stack {
     const dashboard = new cloudwatch.Dashboard(this, 'DataProcessingDashboard');
     dashboard.addWidgets(rawFunctionWidget, rawQueueWidget);
 
+    new cdk.CfnOutput(this, 'DataBucketName', {
+      value: dataBucket.bucketName
+    })
+
     cdk.Tag.add(this, 'Module', '1_DataProcessing');
   }
 }
