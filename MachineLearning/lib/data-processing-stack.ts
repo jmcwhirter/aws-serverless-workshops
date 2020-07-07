@@ -6,10 +6,13 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as path from 'path';
 
+export interface DataProcessingStackProps extends cdk.StackProps {
+  readonly lambdaPath: string;
+}
+
 export class DataProcessingStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, props: DataProcessingStackProps) {
     super(scope, id, props);
-    const dataProcessingLambdaPath = '../1_DataProcessing/lambda-functions/'
 
     const dataBucket = new s3.Bucket(this, 'DataBucket');
 
@@ -18,7 +21,7 @@ export class DataProcessingStack extends cdk.Stack {
     const rawDataFunction = new lambda.Function(this, 'RawDataFunction', {
       runtime: lambda.Runtime.PYTHON_3_7,
       handler: 'lambda_function.lambda_handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, dataProcessingLambdaPath, '1-process-s3-event-fan-out')),
+      code: lambda.Code.fromAsset(path.join(__dirname, props.lambdaPath, '1-process-s3-event-fan-out')),
       deadLetterQueueEnabled: true,
       tracing: lambda.Tracing.ACTIVE,
       memorySize: 256,
@@ -37,7 +40,7 @@ export class DataProcessingStack extends cdk.Stack {
     const transformFunction = new lambda.Function(this, 'TransformDataFunction', {
       runtime: lambda.Runtime.PYTHON_3_7,
       handler: 'lambda_function.lambda_handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, dataProcessingLambdaPath, '2-transform-data-output-to-s3')),
+      code: lambda.Code.fromAsset(path.join(__dirname, props.lambdaPath, '2-transform-data-output-to-s3')),
       deadLetterQueueEnabled: true,
       tracing: lambda.Tracing.ACTIVE,
       memorySize: 128,

@@ -71,7 +71,7 @@ At this point we have built our cloud based development environment, verified it
     ```
 1. Run the following command to install CDK dependencies:
     ```
-    npm install @aws-cdk/core @aws-cdk/aws-s3 @aws-cdk/assert @aws-cdk/aws-lambda @aws-cdk/aws-lambda-event-sources @aws-cdk/aws-sqs @aws-cdk/aws-cloudwatch
+    npm install @aws-cdk/core @aws-cdk/aws-s3 @aws-cdk/assert @aws-cdk/aws-lambda @aws-cdk/aws-lambda-event-sources @aws-cdk/aws-sqs @aws-cdk/aws-cloudwatch @aws-cdk/aws-apigateway @aws-cdk/aws-sagemaker @aws-cdk/aws-iam
     ```
 
 ## Next step:
