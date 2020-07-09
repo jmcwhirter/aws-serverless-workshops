@@ -5,10 +5,10 @@
 
 ### CDK overhaul - Justin
 - [x] Module 0: Instructions on how to get set up
-- [ ] Module 1: CDK
+- [x] Module 1: CDK
   - [x] Do It For Me mode
-  - [ ] Hold My Hand mode
-  - [ ] Tests
+  - [x] Hold My Hand mode
+  - [x] Tests
 - [ ] Module 2: CDK
   - [x] Hold My Hand mode
   - [ ] Tests

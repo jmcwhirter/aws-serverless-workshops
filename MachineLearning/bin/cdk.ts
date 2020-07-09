@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-import 'source-map-support/register';
-import { App, Tag } from '@aws-cdk/core';
-import { DataProcessingStack } from '../lib/data-processing-stack';
+import { App, Tag, IAspect, IConstruct, Stack } from '@aws-cdk/core';
+import { ConnectedDataProcessingStack, DisconnectedDataProcessingStack } from '../lib/data-processing-stack';
 import { ModelBuildingStack } from '../lib/model-building-stack';
 import { ModelInferenceStack } from '../lib/model-inference-stack';
 
@@ -9,14 +8,22 @@ const dataProcessingLambdaPath = '../1_DataProcessing/lambda-functions/'
 const modelInferenceLambdaPath = '../3_Inference/lambda-functions/'
 
 const app = new App();
-const dataProcessingStack = new DataProcessingStack(app, 'DataProcessingStack', {
+const connectedDataProcessingStack = new ConnectedDataProcessingStack(app, 'ConnectedDataProcessingStack', {
+  lambdaPath: dataProcessingLambdaPath
+});
+const disconnectedDataProcessingStack = new DisconnectedDataProcessingStack(app, 'DisconnectedDataProcessingStack', {
   lambdaPath: dataProcessingLambdaPath
 });
 const modelBuildingStack = new ModelBuildingStack(app, 'ModelBuildingStack');
 const modelInferenceStack = new ModelInferenceStack(app, 'ModelInferenceStack', {
   lambdaPath: modelInferenceLambdaPath
-})
+});
 
-Tag.add(dataProcessingStack, 'Workshop', 'Wild Rydes');
-Tag.add(modelBuildingStack, 'Workshop', 'Wild Rydes');
-Tag.add(modelInferenceStack, 'Workshop', 'Wild Rydes');
+class TagResources implements IAspect {
+  public visit(node: IConstruct): void {
+    if (node instanceof Stack) {
+      Tag.add(node, 'Workshop', 'WildRydes');
+    }
+  }
+}
+app.node.applyAspect(new TagResources());

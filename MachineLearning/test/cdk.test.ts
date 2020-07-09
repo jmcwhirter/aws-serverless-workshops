@@ -1,4 +1,4 @@
-import { expect as expectCDK, matchTemplate, MatchStyle, countResources, haveResource } from '@aws-cdk/assert';
+import { expect as expectCDK, matchTemplate, MatchStyle, countResources, haveResource, haveResourceLike, arrayWith, objectLike } from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import * as dps from '../lib/data-processing-stack';
 import * as mbs from '../lib/model-building-stack';
@@ -17,10 +17,10 @@ test('Empty Stack', () => {
     }, MatchStyle.EXACT))
 });
 
-test('Data processing stack - resource count', () => {
+test('Connected data processing stack - resource count', () => {
     const app = new cdk.App();
     // WHEN
-    const stack = new dps.DataProcessingStack(app, 'DataProcessingStack', {
+    const stack = new dps.ConnectedDataProcessingStack(app, 'ConnectedDataProcessingStack', {
       lambdaPath: dataProcessingLambdaPath
     });
     // THEN
@@ -29,18 +29,26 @@ test('Data processing stack - resource count', () => {
     expectCDK(stack).to(countResources('AWS::Lambda::Permission', 1));
     expectCDK(stack).to(countResources('AWS::Lambda::EventSourceMapping', 1));
     expectCDK(stack).to(countResources('AWS::IAM::Role', 3));
+    expectCDK(stack).to(countResources('AWS::IAM::Policy', 3));
     expectCDK(stack).to(countResources('AWS::SQS::Queue', 3));
     expectCDK(stack).to(countResources('AWS::CloudWatch::Dashboard', 1));
 });
 
-test('Data processing stack - verify integrations', () => {
+test('Disconnected data processing stack - resource count', () => {
     const app = new cdk.App();
     // WHEN
-    const stack = new dps.DataProcessingStack(app, 'DataProcessingStack', {
+    const stack = new dps.DisconnectedDataProcessingStack(app, 'DisconnectedDataProcessingStack', {
       lambdaPath: dataProcessingLambdaPath
     });
     // THEN
-    // expectCDK(stack).to(haveResource('AWS::'))
+    expectCDK(stack).to(countResources('AWS::S3::Bucket', 0));
+    expectCDK(stack).to(countResources('AWS::Lambda::Function', 2));
+    expectCDK(stack).to(countResources('AWS::Lambda::Permission', 0));
+    expectCDK(stack).to(countResources('AWS::Lambda::EventSourceMapping', 0));
+    expectCDK(stack).to(countResources('AWS::IAM::Role', 2));
+    expectCDK(stack).to(countResources('AWS::IAM::Policy', 2));
+    expectCDK(stack).to(countResources('AWS::SQS::Queue', 2));
+    expectCDK(stack).to(countResources('AWS::CloudWatch::Dashboard', 1));
 });
 
 test('Model building stack - resource count', () => {

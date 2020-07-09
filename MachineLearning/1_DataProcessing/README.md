@@ -92,17 +92,17 @@ The purpose of this module is machine learning inference using serverless techno
     cdk ls
 
     # Expected output
-    DataProcessingStack
+    ConnectedDataProcessingStack
     ...
     ```
 1. Deploy the data processing stack:
     ```
-    cdk deploy DataProcessingStack
+    cdk deploy ConnectedDataProcessingStack
     ```
 1. Confirm you want to deploy the changes and follow the output.
 1. Your bucket name is provided as an output of DataProcessingStack. However, since our TypeScript code is converted to JavaScript and synthesized to CloudFormation, we can run CloudFormation commands to get information as well. Check is out:
     ```
-    bucket=$(aws cloudformation describe-stacks --stack-name DataProcessingStack --query "Stacks[0].Outputs[?OutputKey=='DataBucketName'].OutputValue" --output text)
+    bucket=$(aws cloudformation describe-stacks --stack-name ConnectedDataProcessingStack --query "Stacks[0].Outputs[?OutputKey=='DataBucketName'].OutputValue" --output text)
     echo $bucket
     ```
 1. Add the bucket name to your scratchpad for future use
@@ -220,17 +220,33 @@ To take advantage of the parallelism available with Lambda, we are going to fan-
             --stack-name wildrydes-ml-mod1 \
             --query "Stacks[0].StackStatus"
         ```
-</p></details><br>
 
 **:heavy_exclamation_mark: DO NOT move past this point until you see CREATE_COMPLETE as the status for your CloudFormation stack**
 
-After CloudFormation is done creating your infrastructure, you will have:
+</p></details><br>
+
+OR
+
+<details>
+<summary>Deploy DisconnectedDataProcessingStack using AWS CDK. (Expand for detailed instructions)</summary><p>
+
+1. Make sure you're in the correct directory first
+    ```
+    cd ~/environment/aws-serverless-workshops/MachineLearning
+    ```
+1. Deploy the disconnected data processing stack:
+    ```
+    cdk deploy DisconnectedDataProcessingStack  -c queueArn=$queue_arn -c bucketName=$bucket
+    ```
+1. Confirm you want to deploy the changes and follow the output.
+
+</p></details><br>
+
+After your infrastructure is deployed, you will have:
 * Lambda function skeletons
 * Dead Letter Queues (DLQ)
 * IAM permissions
 * CloudWatch dashboard
-
-While these are necessary components of our data processing pipeline, they're not the focus of this part of the lab.  This is why we're creating them in a CloudFormation template for you.
 
 ### Step 4: Wire up the Lambda functions
 The previous step gave you the foundation for the Lambda functions that will either be triggered by S3 events or our SQS queue.  Now, you need to wire up the Lambda functions to appropriate event sources and set some environment variables. We're going to use values from scratchpad.txt, so have that handy.
@@ -291,6 +307,10 @@ It's time to upload our ride telemetry data into our pipeline.
 <details>
 <summary>Upload <code>assets/ride_data.json</code> into <code>YOUR_DATA_BUCKET/raw/</code> (Expand for detailed instructions)</summary><p>
 
+1. Make sure you're in the correct directory first
+    ```
+    cd ~/environment/aws-serverless-workshops/MachineLearning/1_DataProcessing
+    ```
 1. In your Cloud9 terminal, run the following code:
     ```
     # Run this command to upload the ride data
