@@ -28,10 +28,13 @@
 1. Navigate to your Cloud9 environment
 1. Run the following commands to delete your resources:
     ```
+    # In real life, use the Force wisely...
+
     # Delete your bucket and all contents
     aws s3 rb s3://$bucket --force
+
     # Tear everything down
-    cdk destroy
+    cdk destroy *Stack --force
     ```
 1. Exit your Cloud9 environment
 1. Select the environment you've been using
