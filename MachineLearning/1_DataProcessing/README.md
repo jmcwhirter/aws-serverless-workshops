@@ -19,9 +19,12 @@ We recommend creating a file in Cloud9 where you can compile a few values. If yo
 
 ### Short Route: Deploy the pipeline for me :see_no_evil:
 
-The purpose of this module is machine learning inference using serverless technologies. While data processing and ETL is an important component, we recommend using the provided CloudFormation template to ensure you complete the section on time. If you are very comfortable with Lambda and SQS, try the alternative route below with detailed steps.
-
 **Time to complete:** 15-20 minutes.
+
+The purpose of this module is machine learning inference using serverless technologies. While data processing and ETL is an important component, we recommend using the CloudFormation or CDK provided by our intern to ensure you complete the section on time. If you are comfortable with Lambda and SQS, try the alternative route below with detailed steps.
+
+<details>
+<summary><strong>Deploy using AWS CloudFormation</strong></summary><p>
 
 1. Navigate to your Cloud9 environment
 1. Make sure you're in the correct directory first
@@ -66,11 +69,62 @@ The purpose of this module is machine learning inference using serverless techno
     aws s3 ls s3://$bucket/raw/
     ```
 
-### Long Route: Build the pipeline yourself :white_check_mark:
+</p></details>
 
-If you would like to learn more about serverless ETL, have experience working with Lambda and SQS, or want to take your time regardless of the duration then this route is a fit for you. This route will deploy the same components as described above. You will need to configure them to communicate with each other.
+<details>
+<summary><strong>Deploy using AWS CDK</strong></summary><p>
+
+1. Navigate to your Cloud9 environment
+1. Make sure you're in the correct directory first
+    ```
+    cd ~/environment/aws-serverless-workshops/MachineLearning
+    ```
+1. Make sure your code builds:
+    ```
+    npm run build
+
+    # Expected output
+    > cdk@x.x.x build /home/ec2-user/environment/aws-serverless-workshops/MachineLearning
+    > tsc
+    ```
+1. Let's see what stacks CDK knows about:
+    ```
+    cdk ls
+
+    # Expected output
+    DataProcessingStack
+    ...
+    ```
+1. Deploy the data processing stack:
+    ```
+    cdk deploy DataProcessingStack
+    ```
+1. Confirm you want to deploy the changes and follow the output.
+1. Your bucket name is provided as an output of DataProcessingStack. However, since our TypeScript code is converted to JavaScript and synthesized to CloudFormation, we can run CloudFormation commands to get information as well. Check is out:
+    ```
+    bucket=$(aws cloudformation describe-stacks --stack-name DataProcessingStack --query "Stacks[0].Outputs[?OutputKey=='DataBucketName'].OutputValue" --output text)
+    echo $bucket
+    ```
+1. Add the bucket name to your scratchpad for future use
+    ```
+    echo "Bucket name:" $bucket >> ~/environment/scratchpad.txt
+    ```
+1. Run this command to upload the ride data
+    ```
+    aws s3 cp 1_DataProcessing/assets/ride_data.json s3://$bucket/raw/ride_data.json
+    ```
+1. Run this command to verify the file was uploaded (you should see the file name listed)
+    ```
+    aws s3 ls s3://$bucket/raw/
+    ```
+
+</p></details>
+
+### Long Route: Build the pipeline yourself :white_check_mark::metal:
 
 **Time to complete:** 30-60 minutes.
+
+If you would like to learn more about serverless ETL, have experience working with Lambda and SQS, or want to take your time regardless of the duration then this route is a fit for you. This route will deploy the same components as described above. You will need to configure them to communicate with each other.
 
 <details>
 <summary><strong>Expand for detailed instructions</strong></summary><p>
@@ -255,6 +309,7 @@ It will take ~8 minutes to process all ~20k entries. Monitor the progress using:
 * [CloudWatch dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:)
   * This shows you the number of invocations for each Lambda function on the left and some SQS message metrics on the right.
   * Refresh the dashboard to see how the plotted invocation count changes. When you see the invocation count settle back to zero, that indicates all of your data has been processed. Until then, feel free to explore the graphs and options.
+  * The metrics are logged every minute. Try changing your view to only see the last 1 hour, 30 minutes, or even 15 minutes to get higher fidelity in the graphs.
 * [SQS console](https://console.aws.amazon.com/sqs)
   * This shows the number of messages flowing through `IngestedRawDataFanOutQueue`. There are also dead letter queues set up in case things go wrong.
 * Run `aws s3 ls s3://$bucket/processed/ | wc -l` in your Cloud9 terminal
