@@ -11,7 +11,7 @@ _If you already have a Cloud9 environment, feel free to use that._
 ### Step 1: Create a Cloud9 environment
 
 <details>
-<summary><strong>Expand if you want detailed directions</strong></summary><p>
+<summary>Expand if you want detailed directions</summary><p>
 
 Create your Cloud9 instance by following these steps:
 
@@ -74,7 +74,7 @@ No additional setup required. Giddy up!
 If you're going to use AWS CDK, there are a few additional set up steps.
 
 <details>
-<summary><strong>Expand for instructions</strong></summary><p>
+<summary>Expand for instructions</summary><p>
 
 1. AWS CDK uses Node.js as a runtime. AWS Cloud9 comes with a version of CDK pre-installed. Run the following command to update to the latest version, globally:
     ```
