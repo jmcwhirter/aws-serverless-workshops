@@ -4,8 +4,7 @@
 - [ ] add persona for someone who wants anonymized data
 
 ### CDK overhaul - Justin
-- [ ] Are we going to swap out CFn for CDK? Or keep both?
-- [ ] Module 0: Instructions on how to get set up
+- [x] Module 0: Instructions on how to get set up
 - [ ] Module 1: CDK
   - [x] Do It For Me mode
   - [ ] Hold My Hand mode
