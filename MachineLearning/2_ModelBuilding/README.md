@@ -14,7 +14,7 @@ Within the notebook we will take advantage of Amazon Athena to query data direct
 Amazon SageMaker notebooks are backed by Elastic Compute Cloud (EC2). These are not available instantly, so create it now and we will come back to it later.
 
 <details>
-<summary>Create a CloudFormation stack from `cloudformation/2_sagemaker.yml` named `wildrydes-ml-mod2`.</summary><p>
+<summary>Create a CloudFormation stack from `cloudformation/2_sagemaker.yml` named `wildrydes-ml-mod2`. (Expand for detailed instructions)</summary><p>
 
 1. Navigate to your Cloud9 environment
 1. Make sure you're in the correct directory first
@@ -40,10 +40,26 @@ Amazon SageMaker notebooks are backed by Elastic Compute Cloud (EC2). These are 
             --query "Stacks[0].StackStatus"
         ```
 
-</p></details><br>
-
 **:heavy_exclamation_mark: DO NOT move past this point until you see CREATE_COMPLETE as the status for your CloudFormation stack**
 
+</p></details>
+
+OR
+
+<details>
+<summary>Deploy ModelBuildingStack using AWS CDK. (Expand for detailed instructions)</summary><p>
+
+1. Make sure you're in the correct directory first
+    ```
+    cd ~/environment/aws-serverless-workshops/MachineLearning
+    ```
+1. Deploy the disconnected model building stack:
+    ```
+    cdk deploy ModelBuildingStack
+    ```
+1. Confirm you want to deploy the changes and follow the output.
+
+</p></details>
 
 ### Step 2: Download the linear learner notebook provided in this workshop
 1. Open [Amazon SageMaker](https://console.aws.amazon.com/sagemaker)

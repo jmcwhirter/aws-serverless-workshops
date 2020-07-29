@@ -1,9 +1,9 @@
-import * as cdk from '@aws-cdk/core';
+import { Construct, Stack, StackProps, Tag } from '@aws-cdk/core';
 import * as iam from '@aws-cdk/aws-iam';
 import * as sagemaker from '@aws-cdk/aws-sagemaker';
 
-export class ModelBuildingStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+export class ModelBuildingStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const notebookRole = new iam.Role(this, 'WildRydesNotebookRole', {
@@ -20,6 +20,6 @@ export class ModelBuildingStack extends cdk.Stack {
       roleArn: notebookRole.roleArn
     });
 
-    cdk.Tag.add(this, 'Module', '2_ModelBuilding');
+    Tag.add(this, 'Module', '2_ModelBuilding');
   }
 }
