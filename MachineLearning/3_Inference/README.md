@@ -1,7 +1,5 @@
 # Make inferences against the model
 
-**Time to complete:** 15-20 minutes.
-
 ## What are we building?
 ![Architecture diagram](assets/WildRydesML_4.png)
 
@@ -14,12 +12,13 @@ With the ability to now, get real-time information of whether or not a ride is g
 
 Why Lambda?  Our unicorn fleet isn't a single breed.  We offer the largest selection of rare unicorn breeds for customers of all needs.  We expect that after further research, each breed is actually responding differently to various weather conditions.  By hosting our models on S3 and using Lambda to make inferences, we can have a dynamic HTTP interface to make predictions against a ML model specific to a unicorn breed without having to pay for separate Amazon SageMaker endpoints (1 per unicorn breed - we have thousands).
 
-### Short cut: Deploy everything for me
+### Short Route: Deploy everything for me :see_no_evil:
 
 We don't recommend this route unless you ran into a snag and are worried about completing the workshop on time.
+**Time to complete:** 5-10 minutes.
 
 <details>
-<summary><strong>:see_no_evil: BREAK GLASS! (use in case of emergency)</strong></summary><p>
+<summary><strong>Deploy using AWS CloudFormation</strong></summary><p>
 
 1. Navigate to your Cloud9 environment
 1. Make sure you're in the correct directory first
@@ -40,30 +39,42 @@ We don't recommend this route unless you ran into a snag and are worried about c
       --capabilities CAPABILITY_NAMED_IAM \
       --template-body file://cloudformation/99_complete.yml
     ```
+1. Set the API Gateway invoke URL as an environment variable.
+    ```
+    apigw=$(aws cloudformation describe-stacks --stack-name wildrydes-ml-mod3 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayInvokeURL'].OutputValue" --output text)
+    ```
 1. Scroll down to the section on testing your API
 
 </p></details>
 
-### Step 1: Get CloudFormation parameters
 <details>
-<summary>Grab the name of your IAM DataProcessingExecutionRole and add it to scratchpad.txt for use later. (Expand for detailed instructions)</summary><p>
+<summary><strong>Deploy using AWS CDK</strong></summary><p>
 
 1. Navigate to your Cloud9 environment
-1. Set the data processing execution role as an environment variable
+1. Make sure you're in the correct directory first
     ```
-    execution_role=$(aws cloudformation describe-stack-resources --stack-name wildrydes-ml-mod1 --logical-resource-id DataProcessingExecutionRole --query "StackResources[0].PhysicalResourceId" --output text)
+    cd ~/environment/aws-serverless-workshops/MachineLearning
     ```
-1. Verify the variable is set
+1. Deploy the model inference stack:
     ```
-    echo $execution_role
+    cdk deploy ConnectedModelInferenceStack \
+      -c bucketName=$bucket \
+      -c modelPath=$(aws s3 ls s3://$bucket/linear-learner --recursive | grep 'model' | cut -c 32-)
     ```
-1. Add the data processing execution role to your scratchpad for future use
+1. Confirm you want to deploy the changes and follow the output.
+1. Set the API Gateway invoke URL as an environment variable.
     ```
-    echo "Data processing execution role:" $execution_role >> ~/environment/scratchpad.txt
+    apigw=$(aws cloudformation describe-stacks --stack-name ConnectedModelInferenceStack --query "Stacks[0].Outputs[0].OutputValue" --output text)
     ```
+1. Scroll down to the section on testing your API
+
 </p></details>
 
-### Step 2: Upload Inference Function Zip
+### Long Route: Build the pipeline yourself :white_check_mark::metal:
+
+**Time to complete:** 15-20 minutes.
+
+### Step 1: Upload Inference Function Zip
 <details>
 <summary>Upload <code>lambda-functions/inferencefunction.zip</code> to <code>YOUR_BUCKET_NAME/code</code>. (Expand for detailed instructions)</summary><p>
 
@@ -81,7 +92,7 @@ We don't recommend this route unless you ran into a snag and are worried about c
     ```
 </p></details>
 
-### Step 3: Create Lambda function and API Gateway skeletons
+### Step 2: Create Lambda function and API Gateway skeletons
 At this point, we have a trained model on S3.  Now, we're ready to load the model into Lambda at runtime and make inferences against the model.  The Lambda function that will make inferences is hosted behind an API Gateway that will accept POST HTTP requests.
 
 <details>
@@ -115,7 +126,7 @@ At this point, we have a trained model on S3.  Now, we're ready to load the mode
 
 **:heavy_exclamation_mark: DO NOT move past this point until you see CREATE_COMPLETE as the status for your CloudFormation stack**
 
-### Step 4: Update Lambda Function
+### Step 3: Update Lambda Function
 The previous step gave us a Lambda function that will load the ML model from S3, make inferences against it in Lambda, and return the results from behind API Gateway.  For this to work, we need to connect some critical pieces.
 
 <details>
@@ -150,7 +161,7 @@ Amazon SageMaker can be used to build, train, and deploy machine learning models
 
 </p></details>
 
-### Step 5: Wire up API Gateway
+### Step 4: Wire up API Gateway
 The last thing we need to connect is the HTTP API Gateway to your `ModelInferenceFunction`
 
 <details>
@@ -187,18 +198,13 @@ Take note of your **Invoke URL**
 ## Testing your API
 
 1. Navigate to your Cloud9 environment
-1. Run the following command to get a premade cURL command you can use to call your model:
+1. Run the following command to call your model:
     ```
-    # Command should be ran from /home/ec2-user/environment/aws-serverless-workshops/MachineLearning/3_Inference in your cloud 9 environment
-    cd ~/environment/aws-serverless-workshops/MachineLearning/3_Inference
-
-    aws cloudformation describe-stacks --stack-name wildrydes-ml-mod3 \
-      --query "Stacks[0].Outputs[?OutputKey=='InferenceFunctionTestCommand'].OutputValue" --output text
+    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }' -H "Content-Type: application/json" -X POST $apigw
     ```
-1. Copy the output and execute the command that looks like: `curl -d { ... }`
 1. _Optional_: You can also test the Lambda function by putting using the test API UI in the API Gateway console.
 
-What did your `curl` command return?  What's this mean? 
+What did your `curl` command return?  What's this mean?
 
 Lets look at the `curl` command first:
 
@@ -206,7 +212,7 @@ Lets look at the `curl` command first:
 
 This is asking our deployed model how likely a unicorn traveling a distance of 30, burning 1500 magic points in the weather conditions = "TMAX": 333, "TMIN": 300, "PRCP": 100 (PRCP = Precipitation (tenths of mm), TMAX = Maximum temperature (tenths of degrees C), and TMIN = Minimum temperature (tenths of degrees C)).
 
-The decimal returned from our API is actually a decimal representation of the liklihood that a unicorn experiencing the conditions in the CURL command is going to require service.
+The decimal returned from our API is actually a decimal representation of the likelihood that a unicorn experiencing the conditions in the CURL command is going to require service.
 
 ### Now What?
 Let's recap - you've put together a pipeline, that:

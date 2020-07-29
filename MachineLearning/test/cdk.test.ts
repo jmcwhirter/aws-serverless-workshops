@@ -60,10 +60,10 @@ test('Model building stack - resource count', () => {
     expectCDK(stack).to(countResources('AWS::IAM::Role', 1));
 });
 
-test('Model inference stack - resource count', () => {
+test('Connected model inference stack - resource count', () => {
     const app = new cdk.App();
     // WHEN
-    const stack = new mis.ModelInferenceStack(app, 'ModelInferenceStack', {
+    const stack = new mis.ConnectedModelInferenceStack(app, 'ConnectedModelInferenceStack', {
       lambdaPath: modelInferenceLambdaPath
     });
     // THEN

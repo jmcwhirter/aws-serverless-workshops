@@ -12,14 +12,14 @@
 - [ ] Module 2: CDK
   - [x] Hold My Hand mode
   - [ ] Tests
-  - [ ] Add example of passing bucket between stacks using App context?
 - [ ] Module 3: CDK
-  - [ ] Do It For Me mode
+  - [x] Do It For Me mode
   - [ ] Hold My Hand mode
   - [ ] Tests
 - [ ] Documentation review
   - [x] Module 1: CloudWatch dashboard > manually change to 30 min
-  - [ ] Module 2: Adjust for CFn v. CDK in Step 1
+  - [ ] Module 3: Hold my hand instructions
+  - [x] Module 3: Testing instructions
   - [x] Module 4: Clean up instructions
     - [ ] Thoughts on using something like [this](https://www.npmjs.com/package/@mobileposse/auto-delete-bucket)
 

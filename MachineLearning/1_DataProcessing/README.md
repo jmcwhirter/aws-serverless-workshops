@@ -60,6 +60,18 @@ The purpose of this module is machine learning inference using serverless techno
     ```
     echo "Bucket name:" $bucket >> ~/environment/scratchpad.txt
     ```
+1. Set the data processing execution role as an environment variable
+    ```
+    execution_role=$(aws cloudformation describe-stack-resources --stack-name wildrydes-ml-mod1 --logical-resource-id DataProcessingExecutionRole --query "StackResources[0].PhysicalResourceId" --output text)
+    ```
+1. Verify the variable is set
+    ```
+    echo $execution_role
+    ```
+1. Add the data processing execution role to your scratchpad for future use
+    ```
+    echo "Data processing execution role:" $execution_role >> ~/environment/scratchpad.txt
+    ```
 1. Run this command to upload the ride data
     ```
     aws s3 cp assets/ride_data.json s3://$bucket/raw/ride_data.json
@@ -220,10 +232,21 @@ To take advantage of the parallelism available with Lambda, we are going to fan-
             --stack-name wildrydes-ml-mod1 \
             --query "Stacks[0].StackStatus"
         ```
-
+1. Set the data processing execution role as an environment variable
+```
+execution_role=$(aws cloudformation describe-stack-resources --stack-name wildrydes-ml-mod1 --logical-resource-id DataProcessingExecutionRole --query "StackResources[0].PhysicalResourceId" --output text)
+```
+1. Verify the variable is set
+```
+echo $execution_role
+```
+1. Add the data processing execution role to your scratchpad for future use
+```
+echo "Data processing execution role:" $execution_role >> ~/environment/scratchpad.txt
+```
 **:heavy_exclamation_mark: DO NOT move past this point until you see CREATE_COMPLETE as the status for your CloudFormation stack**
 
-</p></details><br>
+</p></details>
 
 OR
 
