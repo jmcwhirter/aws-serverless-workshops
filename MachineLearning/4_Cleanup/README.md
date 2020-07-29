@@ -9,10 +9,16 @@
     ```
     # Delete your bucket and all contents
     aws s3 rb s3://$bucket --force
+
+    # Delete your queue if you made one manually
+    aws sqs delete-queue --queue-url $queue_url
+
     # The inference resources from module 3
     aws cloudformation delete-stack --stack-name wildrydes-ml-mod3
+
     # The machine learning resources from module 2
     aws cloudformation delete-stack --stack-name wildrydes-ml-mod2
+
     # The data processing resources from module 1
     aws cloudformation delete-stack --stack-name wildrydes-ml-mod1
     ```
@@ -32,6 +38,9 @@
 
     # Delete your bucket and all contents
     aws s3 rb s3://$bucket --force
+
+    # Delete your queue if you made one manually
+    aws sqs delete-queue --queue-url $queue_url
 
     # Tear everything down
     cdk destroy *Stack --force

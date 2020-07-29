@@ -59,17 +59,19 @@ Let's get our code and start working. Inside the terminal:
 
 At this point we have built our cloud based development environment, verified it is configured with the right credentials, and copied down some source code from a code repository.
 
+### Step 5: Choose your path
+
 Wild Rydes is in the middle of a digital transformation. This means they have mandated that cloud resources be provisioned using infrastructure as code. Over the summer, two interns wrote the necessary code but they didn't talk. One intern used [AWS CloudFormation](https://aws.amazon.com/cloudformation/) because this is what he used last year as an intern at Octan. The other intern read about [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) on [r/DevOps](https://www.reddit.com/r/devops/) and decided to go that route. She read that AWS CDK is a software development framework for defining cloud infrastructure in code and provisioning it through AWS CloudFormation. As a programmer, she knew any problem could be solved with another layer of abstraction.
 
 *Check out this [workshop](https://cdkworkshop.com/) specifically on AWS CDK, if you're interested in learning more.*
 
 It's time to decide which intern you want to follow. When deploying your infrastructure as code, you'll have the choice between AWS CloudFormation or AWS CDK. While you shouldn't run into any issues, please don't mix.
 
-### AWS CloudFormation
+#### AWS CloudFormation
 
 No additional setup required. Giddy up!
 
-### AWS Cloud Development Kit (AWS CDK)
+#### AWS Cloud Development Kit (AWS CDK)
 
 If you're going to use AWS CDK, there are a few additional set up steps.
 
