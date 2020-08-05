@@ -19,7 +19,7 @@ const connectedModelInferenceStack = new ConnectedModelInferenceStack(app, 'Conn
   lambdaPath: modelInferenceLambdaPath
 });
 const disconnectedModelInferenceStack = new DisconnectedModelInferenceStack(app, 'DisconnectedModelInferenceStack', {
-  lambdaPath: modelInferenceLambdaPath
+  lambdaPath: ''
 });
 
 class TagResources implements IAspect {

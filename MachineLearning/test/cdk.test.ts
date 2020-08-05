@@ -17,7 +17,7 @@ test('Empty Stack', () => {
     }, MatchStyle.EXACT))
 });
 
-test('Connected data processing stack - resource count', () => {
+test('Connected data processing stack', () => {
     const app = new cdk.App();
     // WHEN
     const stack = new dps.ConnectedDataProcessingStack(app, 'ConnectedDataProcessingStack', {
@@ -34,7 +34,7 @@ test('Connected data processing stack - resource count', () => {
     expectCDK(stack).to(countResources('AWS::CloudWatch::Dashboard', 1));
 });
 
-test('Disconnected data processing stack - resource count', () => {
+test('Disconnected data processing stack', () => {
     const app = new cdk.App();
     // WHEN
     const stack = new dps.DisconnectedDataProcessingStack(app, 'DisconnectedDataProcessingStack', {
@@ -51,16 +51,19 @@ test('Disconnected data processing stack - resource count', () => {
     expectCDK(stack).to(countResources('AWS::CloudWatch::Dashboard', 1));
 });
 
-test('Model building stack - resource count', () => {
+test('Model building stack', () => {
     const app = new cdk.App();
     // WHEN
     const stack = new mbs.ModelBuildingStack(app, 'ModelBuildingStack');
     // THEN
     expectCDK(stack).to(countResources('AWS::SageMaker::NotebookInstance', 1));
     expectCDK(stack).to(countResources('AWS::IAM::Role', 1));
+    expectCDK(stack).to(haveResource('AWS::SageMaker::NotebookInstance', {
+      InstanceType: 'ml.t3.xlarge'
+    }));
 });
 
-test('Connected model inference stack - resource count', () => {
+test('Connected model inference stack', () => {
     const app = new cdk.App();
     // WHEN
     const stack = new mis.ConnectedModelInferenceStack(app, 'ConnectedModelInferenceStack', {
@@ -70,4 +73,27 @@ test('Connected model inference stack - resource count', () => {
     expectCDK(stack).to(countResources('AWS::Lambda::Function', 1));
     expectCDK(stack).to(countResources('AWS::IAM::Role', 2));
     expectCDK(stack).to(countResources('AWS::ApiGateway::RestApi', 1));
+    expectCDK(stack).to(countResources('AWS::ApiGateway::Method', 2));
+    expectCDK(stack).to(haveResource('AWS::ApiGateway::Method', {
+      HttpMethod: 'ANY'
+    }));
+});
+
+test('Disconnected model inference stack', () => {
+    const app = new cdk.App();
+    // WHEN
+    const stack = new mis.DisconnectedModelInferenceStack(app, 'DisconnectedModelInferenceStack', {
+      lambdaPath: modelInferenceLambdaPath
+    });
+    // THEN
+    expectCDK(stack).to(countResources('AWS::Lambda::Function', 1));
+    expectCDK(stack).to(countResources('AWS::IAM::Role', 2));
+    expectCDK(stack).to(countResources('AWS::ApiGateway::RestApi', 1));
+    expectCDK(stack).to(countResources('AWS::ApiGateway::Method', 1));
+    expectCDK(stack).to(haveResource('AWS::ApiGateway::Method', {
+      HttpMethod: 'OPTIONS'
+    }));
+    expectCDK(stack).notTo(haveResource('AWS::ApiGateway::Method', {
+      HttpMethod: 'ANY'
+    }));
 });

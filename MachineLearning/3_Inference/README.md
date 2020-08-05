@@ -42,7 +42,11 @@ We don't recommend this route unless you ran into a snag and are worried about c
     ```
 1. Set the API Gateway invoke URL as an environment variable.
     ```
-    apigw=$(aws cloudformation describe-stacks --stack-name wildrydes-ml-mod3 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayInvokeURL'].OutputValue" --output text)
+    apigw=$(aws cloudformation describe-stacks \
+      --stack-name wildrydes-ml-mod3 \
+      --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayInvokeURL'].OutputValue" \
+      --output text)
+    echo $apigw
     ```
 1. Scroll down to the section on testing your API
 
@@ -66,6 +70,7 @@ We don't recommend this route unless you ran into a snag and are worried about c
 1. Set the API Gateway invoke URL as an environment variable.
     ```
     apigw=$(aws cloudformation describe-stacks --stack-name ConnectedModelInferenceStack --query "Stacks[0].Outputs[0].OutputValue" --output text)
+    echo $apigw
     ```
 1. Scroll down to the section on testing your API
 
@@ -96,8 +101,12 @@ We don't recommend this route unless you ran into a snag and are worried about c
 ### Step 2: Create Lambda function and API Gateway skeletons
 At this point, we have a trained model on S3.  Now, we're ready to load the model into Lambda at runtime and make inferences against the model.  The Lambda function that will make inferences is hosted behind an API Gateway that will accept POST HTTP requests.
 
+Create a Lambda function for Model Inferences named <code>ModelInferenceFunction</code> and a REST API Gateway instance. Read the CloudFormation or CDK files if you need help figuring it out.
+
+OR
+
 <details>
-<summary>Create Lambda function for Model Inferences named <code>ModelInferenceFunction</code> and an HTTP API by launching <code>cloudformation/3_lambda_function.yml</code> Stack and naming it <code>wildrydes-ml-mod3</code>. (Expand for detailed instructions)</summary><p>
+<summary>Create a CloudFormation stack from <code>cloudformation/3_lambda_function.yml</code> named <code>wildrydes-ml-mod3</code>. (Expand for detailed instructions)</summary><p>
 
 1. Navigate to your Cloud9 environment
 1. Run the following command to create your resources:
@@ -123,9 +132,37 @@ At this point, we have a trained model on S3.  Now, we're ready to load the mode
             --stack-name wildrydes-ml-mod3 \
             --query "Stacks[0].StackStatus"
         ```
-</p></details><br>
 
 **:heavy_exclamation_mark: DO NOT move past this point until you see CREATE_COMPLETE as the status for your CloudFormation stack**
+
+</p></details><br>
+
+OR
+
+<details>
+<summary>Deploy DisconnectedModelInferenceStack using AWS CDK. (Expand for detailed instructions)</summary><p>
+
+1. Make sure you're in the correct directory first
+    ```
+    cd ~/environment/aws-serverless-workshops/MachineLearning
+    ```
+1. Deploy the disconnected model inference stack:
+    ```
+    cdk deploy DisconnectedModelInferenceStack \
+      -c bucketName=$bucket
+    ```
+1. Set the API Gateway invoke URL as an environment variable.
+    ```
+    apigw=$(aws cloudformation describe-stacks \
+      --stack-name DisconnectedModelInferenceStack \
+      --query "Stacks[0].Outputs[0].OutputValue" \
+      --output text)
+    echo $apigw
+    ```
+1. Confirm you want to deploy the changes and follow the output.
+
+
+</p></details>
 
 ### Step 3: Update Lambda Function
 The previous step gave us a Lambda function that will load the ML model from S3, make inferences against it in Lambda, and return the results from behind API Gateway.  For this to work, we need to connect some critical pieces.
@@ -189,19 +226,22 @@ The last thing we need to connect is the HTTP API Gateway to your `ModelInferenc
     1. Click `ModelInferenceApi`
     1. Select the root `/` resource
 1. Click **Actions** > **Deploy API**
-1. Select `[New Stage]` for **Deployment Stage**
-1. Type `prod` for **Stage name**
+1. Select the `prod` stage if it exists. If not,
+    1. Select `[New Stage]` for **Deployment Stage**
+    1. Type `prod` for **Stage name**
 1. Click **Deploy**
 </p></details><br>
 
-Take note of your **Invoke URL**
+ :metal: Take note of your **Invoke URL** if you are figuring this out on your own. You'll use it as an environment variable below.
 
 ## Testing your API
 
 1. Navigate to your Cloud9 environment
 1. Run the following command to call your model:
     ```
-    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }' -H "Content-Type: application/json" -X POST $apigw
+    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }' \
+      -H "Content-Type: application/json" \
+      -X POST $apigw
     ```
 1. _Optional_: You can also test the Lambda function by putting using the test API UI in the API Gateway console.
 
@@ -209,7 +249,9 @@ What did your `curl` command return?  What's this mean?
 
 Lets look at the `curl` command first:
 
-    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }' -H "Content-Type: application/json" -X POST STAGE_URL
+    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }'
+      -H "Content-Type: application/json"
+      -X POST STAGE_URL
 
 This is asking our deployed model how likely a unicorn traveling a distance of 30, burning 1500 magic points in the weather conditions = "TMAX": 333, "TMIN": 300, "PRCP": 100 (PRCP = Precipitation (tenths of mm), TMAX = Maximum temperature (tenths of degrees C), and TMIN = Minimum temperature (tenths of degrees C)).
 
