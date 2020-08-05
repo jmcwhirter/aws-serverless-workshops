@@ -69,7 +69,10 @@ We don't recommend this route unless you ran into a snag and are worried about c
 1. Confirm you want to deploy the changes and follow the output.
 1. Set the API Gateway invoke URL as an environment variable.
     ```
-    apigw=$(aws cloudformation describe-stacks --stack-name ConnectedModelInferenceStack --query "Stacks[0].Outputs[0].OutputValue" --output text)
+    apigw=$(aws cloudformation describe-stacks \
+      --stack-name ConnectedModelInferenceStack \
+      --query "Stacks[0].Outputs[0].OutputValue" \
+      --output text)
     echo $apigw
     ```
 1. Scroll down to the section on testing your API
