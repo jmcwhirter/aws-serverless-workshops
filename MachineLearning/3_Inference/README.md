@@ -15,6 +15,7 @@ Why Lambda?  Our unicorn fleet isn't a single breed.  We offer the largest selec
 ### Short Route: Deploy everything for me :see_no_evil:
 
 We don't recommend this route unless you ran into a snag and are worried about completing the workshop on time.
+
 **Time to complete:** 5-10 minutes.
 
 <details>
