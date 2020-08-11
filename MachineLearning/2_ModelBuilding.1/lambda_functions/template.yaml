@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  lambda-athena-data-prep
+
+  Sample SAM Template for lambda-athena-data-prep
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 300
+
+Resources:
+  AthenaDataSetupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: athena_data_setup/
+      Handler: app.lambda_handler
+      Layers:
+        - arn:aws:lambda:us-east-1:686858492265:layer:pythonlayer:5
+      Runtime: python3.8
+      MemorySize: 3008
+  
+  ShapeSplitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: shape_split_data/
+      Handler: app.lambda_handler
+      Layers:
+        - arn:aws:lambda:us-east-1:686858492265:layer:pythonlayer:5
+      Runtime: python3.8
+      MemorySize: 3008
+  
+  QueryTrainingStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: query_training_status/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Timeout: 15
+      MemorySize: 128
+
+Outputs:
+  AthenaDataSetupFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt AthenaDataSetupFunction.Arn
+  AthenaDataSetupFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt AthenaDataSetupFunctionRole.Arn

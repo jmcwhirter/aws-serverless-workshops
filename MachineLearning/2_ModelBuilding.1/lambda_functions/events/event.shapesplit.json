@@ -1,0 +1,47 @@
+{
+  "ExecutedVersion": "$LATEST",
+  "Payload": "{\"df_location\": \"s3://wildrydes-ml-mod1-databucket-686858492265/merged_dfs/08-06-2020-16:31:57_merged_df.csv\", \"data_bucket\": \"wildrydes-ml-mod1-databucket-686858492265\"}",
+  "SdkHttpMetadata": {
+    "AllHttpHeaders": {
+      "X-Amz-Executed-Version": [
+        "$LATEST"
+      ],
+      "x-amzn-Remapped-Content-Length": [
+        "0"
+      ],
+      "Connection": [
+        "keep-alive"
+      ],
+      "x-amzn-RequestId": [
+        "bf025b58-83ac-46e8-a182-553422b15e51"
+      ],
+      "Content-Length": [
+        "180"
+      ],
+      "Date": [
+        "Thu, 06 Aug 2020 16:31:58 GMT"
+      ],
+      "X-Amzn-Trace-Id": [
+        "root=1-5f2c3041-0ee1c60407e4b1eca0de2776;sampled=0"
+      ],
+      "Content-Type": [
+        "application/json"
+      ]
+    },
+    "HttpHeaders": {
+      "Connection": "keep-alive",
+      "Content-Length": "180",
+      "Content-Type": "application/json",
+      "Date": "Thu, 06 Aug 2020 16:31:58 GMT",
+      "X-Amz-Executed-Version": "$LATEST",
+      "x-amzn-Remapped-Content-Length": "0",
+      "x-amzn-RequestId": "bf025b58-83ac-46e8-a182-553422b15e51",
+      "X-Amzn-Trace-Id": "root=1-5f2c3041-0ee1c60407e4b1eca0de2776;sampled=0"
+    },
+    "HttpStatusCode": 200
+  },
+  "SdkResponseMetadata": {
+    "RequestId": "bf025b58-83ac-46e8-a182-553422b15e51"
+  },
+  "StatusCode": 200
+}

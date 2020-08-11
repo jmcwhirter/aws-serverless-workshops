@@ -1,0 +1,1 @@
+aws lambda list-layer-versions --layer-name pythonlayer | jq ".LayerVersions[0].LayerVersionArn"
