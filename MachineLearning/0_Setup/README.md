@@ -51,10 +51,12 @@ Let's get our code and start working. Inside the terminal:
 1. Run the following command to get our code:
     ```
     git clone https://github.com/jmcwhirter/aws-serverless-workshops/
+    cd aws-serverless-workshops
+    git checkout ml-cdk
     ```
 1. Navigate to our workshop:
     ```
-    cd aws-serverless-workshops/MachineLearning/
+    cd MachineLearning/
     ```
 
 At this point we have built our cloud based development environment, verified it is configured with the right credentials, and copied down some source code from a code repository.
