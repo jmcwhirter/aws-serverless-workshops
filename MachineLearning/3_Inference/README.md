@@ -285,4 +285,5 @@ Let's recap - you've put together a pipeline, that:
 We're now able to predict real time, when each unicorn is going to need to be serviced.  Leveraging this new capability, we're able to perform preventative repairs on the unicorns before the more costly repairs are required and the unicorn is removed from service.
 
 ## Next step:
-Let's build a pipeline to [retrain our model](../4_ModelRetraining) and see how the model performance changes.
+Make sure you [clean up](../99_Cleanup) any resources you created.
+<!-- Let's build a pipeline to [retrain our model](../4_ModelRetraining) and see how the model performance changes. -->

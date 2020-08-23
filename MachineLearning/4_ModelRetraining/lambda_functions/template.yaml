@@ -10,11 +10,6 @@ Globals:
   Function:
     Timeout: 300
 
-Parameters:
-  LayerArn:
-    Type: String
-    MinLength: 1
-
 Resources:
   AthenaDataSetupFunction:
     Type: AWS::Serverless::Function
@@ -22,9 +17,12 @@ Resources:
       CodeUri: athena_data_setup/
       Handler: app.lambda_handler
       Layers:
-        - !Ref LayerArn
+        - **EDIT_ME**
       Runtime: python3.8
       MemorySize: 3008
+      Policies:
+        - AmazonAthenaFullAccess
+        - AmazonS3FullAccess
 
   ShapeSplitFunction:
     Type: AWS::Serverless::Function
@@ -32,7 +30,7 @@ Resources:
       CodeUri: shape_split_data/
       Handler: app.lambda_handler
       Layers:
-        - !Ref LayerArn
+        - **EDIT_ME**
       Runtime: python3.8
       MemorySize: 3008
 
@@ -46,9 +44,9 @@ Resources:
       MemorySize: 128
 
 Outputs:
-  AthenaDataSetupFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt AthenaDataSetupFunction.Arn
-  AthenaDataSetupFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt AthenaDataSetupFunctionRole.Arn
+  LambdaQueryStatus:
+    Value: !Ref QueryTrainingStatusFunction
+  LambdaDataPrep:
+    Value: !Ref AthenaDataSetupFunction
+  LambdaDataSplit:
+    Value: !Ref ShapeSplitFunction
