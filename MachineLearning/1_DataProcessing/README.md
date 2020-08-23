@@ -119,9 +119,9 @@ The purpose of this module is machine learning inference using serverless techno
     cdk deploy ConnectedDataProcessingStack
     ```
 1. Confirm you want to deploy the changes and follow the output.
-    :warning: You will get an error if this is your first time using CDK in the region. Run the command provided and re-run your previous command:
+  :warning: You will get an error if this is your first time using CDK in the region. Run the command provided and re-run your previous command:
     `cdk bootstrap aws://unknown-account/unknown-region`
-1. Your bucket name is provided as an output of DataProcessingStack. However, since our TypeScript code is converted to JavaScript and synthesized to CloudFormation, we can run CloudFormation commands to get information as well. Check is out:
+1. Your bucket name is provided as an output of DataProcessingStack. However, since our TypeScript code is converted to JavaScript and synthesized to CloudFormation, we can run CloudFormation commands to get information as well. Check this out:
     ```
     bucket=$(aws cloudformation describe-stacks \
       --stack-name ConnectedDataProcessingStack \

@@ -242,7 +242,7 @@ The last thing we need to connect is the HTTP API Gateway to your `ModelInferenc
 1. Navigate to your Cloud9 environment
 1. Run the following command to call your model:
     ```
-    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }' \
+    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 155, "TMIN": 100, "PRCP": 100 }' \
       -H "Content-Type: application/json" \
       -X POST $apigw
     ```
@@ -252,13 +252,27 @@ What did your `curl` command return?  What's this mean?
 
 Lets look at the `curl` command first:
 
-    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }'
+    curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 155, "TMIN": 100, "PRCP": 100 }'
       -H "Content-Type: application/json"
       -X POST STAGE_URL
 
-This is asking our deployed model how likely a unicorn traveling a distance of 30, burning 1500 magic points in the weather conditions = "TMAX": 333, "TMIN": 300, "PRCP": 100 (PRCP = Precipitation (tenths of mm), TMAX = Maximum temperature (tenths of degrees C), and TMIN = Minimum temperature (tenths of degrees C)).
+This is asking our deployed model how likely a unicorn traveling a distance of 30, burning 1500 magic points in the weather conditions = "TMAX": 155, "TMIN": 100, "PRCP": 100 (PRCP = Precipitation (tenths of mm), TMAX = Maximum temperature (tenths of degrees C), and TMIN = Minimum temperature (tenths of degrees C)).
 
-The decimal returned from our API is actually a decimal representation of the likelihood that a unicorn experiencing the conditions in the CURL command is going to require service.
+The decimal returned from our API is actually a decimal representation of the likelihood that a unicorn experiencing the conditions in the CURL command is going to require service. You likely got a very low probability. Let's try changing some inputs to explore our model:
+
+What happens when our unicorns have to fly in hotter temperatures?
+```
+curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 100 }' \
+  -H "Content-Type: application/json" \
+  -X POST $apigw
+```
+
+What happens when our unicorns experience more rain?
+```
+curl -d '{ "distance": 30, "healthpoints": 30, "magicpoints": 1500, "TMAX": 333, "TMIN": 300, "PRCP": 1000 }' \
+  -H "Content-Type: application/json" \
+  -X POST $apigw
+```
 
 ### Now What?
 Let's recap - you've put together a pipeline, that:
@@ -271,4 +285,4 @@ Let's recap - you've put together a pipeline, that:
 We're now able to predict real time, when each unicorn is going to need to be serviced.  Leveraging this new capability, we're able to perform preventative repairs on the unicorns before the more costly repairs are required and the unicorn is removed from service.
 
 ## Next step:
-Once you're done testing the API call to your model, you can [clean up the resources](../4_Cleanup) so you're not charged.
+Let's build a pipeline to [retrain our model](../4_ModelRetraining) and see how the model performance changes.

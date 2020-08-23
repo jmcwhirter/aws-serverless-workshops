@@ -69,18 +69,19 @@ OR
 1. When redirected to the notebook instance, click **New** (upper right), then select **Terminal** from list.
 1. A new tab will open. When in the terminal, run the following command:
     ```
-    curl https://raw.githubusercontent.com/jmcwhirter/aws-serverless-workshops/master/MachineLearning/2_ModelBuilding/notebooks/linear_learner.ipynb \
+    curl https://raw.githubusercontent.com/jmcwhirter/aws-serverless-workshops/ml-cdk/MachineLearning/2_ModelBuilding/notebooks/linear_learner.ipynb \
       -o SageMaker/linear_learner.ipynb && exit
     ```
 1. Exit the terminal tab/window
 1. Verify you see a file named **linear_learner.ipynb**
 
 ### Step 3: Execute the instructions in the notebook
-1. Click on the **linear_learner.ipynb** file and follow the instructions.
+1. Click on the **linear_learner.ipynb** file.
+1. You'll need the S3 bucket name captured in `scratchpad.txt` within your Cloud9 environment.
+1. Once complete, you should have a trained model in S3. Go ahead and run through the notebook steps and come back here.
     * You can run the notebook document step-by-step (one cell a time) by pressing `shift + enter`.
     * You can run the whole notebook in a single step by clicking on the menu `Cell -> Run All`.
     * To restart the kernel (i.e. the computational engine), click on the menu `Kernel -> Restart`. This can be useful to start over a computation from scratch (e.g. variables are deleted, open files are closed, etc…).
-1. Once complete, you should have a trained model in S3.
 
 ### Step 4: Verify you have a model
 1. Navigate to your Cloud9 environment
