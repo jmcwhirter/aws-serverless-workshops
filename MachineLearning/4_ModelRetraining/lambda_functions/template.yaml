@@ -10,6 +10,11 @@ Globals:
   Function:
     Timeout: 300
 
+Parameters:
+  LayerArn:
+    Type: String
+    MinLength: 1
+
 Resources:
   AthenaDataSetupFunction:
     Type: AWS::Serverless::Function
@@ -17,20 +22,20 @@ Resources:
       CodeUri: athena_data_setup/
       Handler: app.lambda_handler
       Layers:
-        - arn:aws:lambda:us-east-1:686858492265:layer:pythonlayer:5
+        - !Ref LayerArn
       Runtime: python3.8
       MemorySize: 3008
-  
+
   ShapeSplitFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: shape_split_data/
       Handler: app.lambda_handler
       Layers:
-        - arn:aws:lambda:us-east-1:686858492265:layer:pythonlayer:5
+        - !Ref LayerArn
       Runtime: python3.8
       MemorySize: 3008
-  
+
   QueryTrainingStatusFunction:
     Type: AWS::Serverless::Function
     Properties:
