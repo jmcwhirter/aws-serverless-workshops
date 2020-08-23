@@ -34,7 +34,7 @@
 1. Navigate to your Cloud9 environment
 1. Run the following commands to delete your resources:
     ```
-    # In real life, use the Force wisely...
+    # In real life, use The Force wisely...
 
     # Delete your bucket and all contents
     aws s3 rb s3://$bucket --force
