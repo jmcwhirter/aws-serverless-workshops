@@ -33,6 +33,8 @@ Resources:
         - **EDIT_ME**
       Runtime: python3.8
       MemorySize: 3008
+      Policies:
+        - AmazonS3FullAccess
 
   QueryTrainingStatusFunction:
     Type: AWS::Serverless::Function
@@ -43,6 +45,21 @@ Resources:
       Timeout: 15
       MemorySize: 128
 
+  DeployModelFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: deploy_model/
+      Handler: app.lambda_handler
+      Layers:
+        - **EDIT_ME**
+      Runtime: python3.8
+      MemorySize: 3008
+      Policies:
+        - AmazonS3FullAccess
+      Environment:
+        Variables:
+          MODEL_DEPLOY_PATH: "deploy/model.tar.gz"
+
 Outputs:
   LambdaQueryStatus:
     Value: !Ref QueryTrainingStatusFunction
@@ -50,3 +67,5 @@ Outputs:
     Value: !Ref AthenaDataSetupFunction
   LambdaDataSplit:
     Value: !Ref ShapeSplitFunction
+  LambdaDeployModel:
+    Value: !Ref DeployModelFunction
