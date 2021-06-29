@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Wild Rydes ML inference infrastructure for Ginormous Models
+Parameters:
+  SecurityGroupIds:
+    Type: CommaDelimitedList
+    Description: The list of security groups in your Virtual Private Cloud (VPC)
+  SubnetIDs:
+    Type: CommaDelimitedList
+    Description: The list of SubnetIDs in your Virtual Private Cloud (VPC)
+  EFSpath:
+    Type: String
+    Default: /mnt/python
+  AccessPointARN:
+    Type: String
+    Description: Access point ARN
+  DataBucket:
+    Type: String
+    MinLength: 1
+    ConstraintDescription: 'Enter the name of your S3 data bucket (YOUR_BUCKET_NAME)'
+    
+Resources:
+  LambdaEFSMLExecuteInferenceServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonElasticFileSystemClientFullAccess
+  MLInferenceFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref DataBucket
+        S3Key: code/ml_inferencefunction.zip
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.7
+      Timeout: 90
+      MemorySize: 3008
+      VpcConfig:
+        SecurityGroupIds: !Ref SecurityGroupIds
+        SubnetIds: !Ref SubnetIDs
+      FileSystemConfigs:
+      - Arn: !Ref AccessPointARN
+        LocalMountPath: !Ref EFSpath
+      Role: !GetAtt LambdaEFSMLExecuteInferenceServiceRole.Arn
+      Environment:
+        Variables:
+          EFS_PATH: /mnt/python
+          PY_PKG_PATH: tensorflow/lib/python3.7/site-packages
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+  ApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "GinormousModelInferenceApi"
+      Description: "Wild Rydes Model Inference REST API"
+  lambdaApiGatewayInvoke:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt "MLInferenceFunction.Arn"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/POST/"
+
+Outputs:
+  MLInferenceFunction:
+    Description: "TensorFlow object detection Inference Lambda Function ARN"
+    Value: !GetAtt MLInferenceFunction.Arn
+  ApiGatewayInvokeURL:
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod"
+  InferenceFunctionTestCommand:
+    Description: "cURL command to invoke our lambda function to make inferences"
+    Value:
+      Fn::Join:
+        - " "
+        -
+          - "curl -d '{ "url": "https://images.pexels.com/photos/310983/pexels-photo-310983.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"}' -H \"Content-Type: application/json\" -X POST"
+          - !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod"
