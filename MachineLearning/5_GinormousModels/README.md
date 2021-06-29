@@ -1,4 +1,4 @@
-# Make inferences against Large models with dependencies
+# Make inferences against large models with dependencies
 
 ## What are we building?
 ![Architecture diagram](assets/WildRydesML_5.png)
@@ -27,13 +27,33 @@ We don't recommend this route unless you ran into a snag and are worried about c
 1. Navigate to your Cloud9 environment
 1. Make sure you're in the correct directory first
     ```
-    cd ~/environment/aws-serverless-workshops/MachineLearning/3_Inference
+    cd ~/environment/aws-serverless-workshops/MachineLearning/5_GinormousModels
     ```
 1. Upload the inference code to Lambda
     ```
     aws s3 cp lambda-functions/ml_inferencefunction.zip s3://$bucket/code/ml_inferencefunction.zip
     ```
 1. Create your resources
+    ```
+    aws cloudformation create-stack \
+      --stack-name wildrydes-ml-mod3 \
+      --parameters ParameterKey=DataBucket,ParameterValue=$bucket \
+                   ParameterKey=DataProcessingExecutionRoleName,ParameterValue=$(aws cloudformation describe-stack-resources --stack-name wildrydes-ml-mod1 --logical-resource-id DataProcessingExecutionRole --query "StackResources[0].PhysicalResourceId" --output text) \
+                   ParameterKey=TrainedModelPath,ParameterValue=$(aws s3 ls s3://$bucket/linear-learner --recursive | grep 'model' | cut -c 32-) \
+      --capabilities CAPABILITY_NAMED_IAM \
+      --template-body file://cloudformation/99_complete.yml
+    ```
+1. Set the API Gateway invoke URL as an environment variable.
+    ```
+    apigw=$(aws cloudformation describe-stacks \
+      --stack-name wildrydes-ml-mod3 \
+      --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayInvokeURL'].OutputValue" \
+      --output text)
+    echo $apigw
+    ```
+1. Scroll down to the section on testing your API
+
+</p></details>
 
 </p></details>
 
@@ -91,6 +111,7 @@ We don't recommend this route unless you ran into a snag and are worried about c
     mnt_subnet=$(aws cloudformation describe-stacks  --stack-name wildrydes-ml-mod5 --query "Stacks[0].Outputs[?OutputKey=='PrivateSubnetOne'].OutputValue" --output text;\
     echo ','; 
     aws cloudformation describe-stacks  --stack-name wildrydes-ml-mod5 --query "Stacks[0].Outputs[?OutputKey=='PrivateSubnetTwo'].OutputValue" --output text)
+    ```
     ```
     mnt_subnet=\"${mnt_subnet}\"; mnt_subnet="$(echo -e "${mnt_subnet}" | tr -d '[:space:]')"
     ```
